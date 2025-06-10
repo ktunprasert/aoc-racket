@@ -8,7 +8,7 @@
 3   3
 ")
 
-(define input1 (file->string "1.txt"))
+;; (define input1 (file->string "1.txt"))
 
 (define (solve1 s)
   (define parsed (map string->number (string-split s #px"\\s+|\n")))
@@ -24,4 +24,4 @@
 
   (for/sum ([l l] [r r]) (abs (- l r))))
 
-(solve1 input1)
+(solve1 _example1)
