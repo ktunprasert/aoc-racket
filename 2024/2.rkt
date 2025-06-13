@@ -8,10 +8,10 @@
 
 (define args (vector->list (current-command-line-arguments)))
 
-(define has-flag? (lambda (flag) (member flag args)))
+(define has-flag? (λ (flag) (member flag args)))
 
 (define filename
-  (let ([non-flags (filter (lambda (arg) (not (string-prefix? arg "--"))) args)])
+  (let ([non-flags (filter (λ (arg) (not (string-prefix? arg "--"))) args)])
     (if (null? non-flags)
         "2024/2.txt"
         (first non-flags))))
@@ -33,7 +33,7 @@
 
 (define part2
   (curry count
-         (lambda (lst)
+         (λ (lst)
            (~> (cons lst (combinations lst (sub1 (length lst)))) (ormap (λ~> to-diff safe?) _)))))
 
 (when (has-flag? "--output")
