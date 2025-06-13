@@ -18,7 +18,7 @@
         "2024/3.txt"
         (first non-flags))))
 
-(define part1-lexer
+(define the-lexer
   (lexer [(eof) eof]
          ["do()" 'do]
          ["don't()" 'dont]
@@ -27,14 +27,14 @@
                  [parts (string-split content ",")])
             (list (string->number (first parts)) (string->number (second parts))))]
          ; Skip everything else
-         [any-char (part1-lexer input-port)]))
+         [any-char (the-lexer input-port)]))
 
 (define input
   (time (display "Parsing took: ")
         (with-input-from-file filename
                               (λ ()
                                 (let loop ([result '()])
-                                  (let ([token (part1-lexer (current-input-port))])
+                                  (let ([token (the-lexer (current-input-port))])
                                     (cond
                                       [(eof-object? token) (reverse (flatten result))]
                                       [(list? token) (loop (cons token result))]
