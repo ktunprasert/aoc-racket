@@ -16,9 +16,9 @@
 
 (define input
   (with-input-from-file filename
-    (lambda ()
-      (for/list ([line (in-lines)])
-        line))))
+                        (lambda ()
+                          (for/list ([line (in-lines)])
+                            (list line)))))
 
 (define (part1 input)
   "TODO: Implement part 1")
