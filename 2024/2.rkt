@@ -34,8 +34,9 @@
 (define part2
   (curry count
          (lambda (lst)
-           (for/or ([l (in-combinations lst (sub1 (length lst)))])
-             (~> l to-diff safe?)))))
+           (or (~> lst to-diff safe?)
+               (for/or ([l (in-combinations lst (sub1 (length lst)))])
+                 (~> l to-diff safe?))))))
 
 (when (has-flag? "--output")
   (printf "Input: ~a~n" input))
