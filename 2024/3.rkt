@@ -19,27 +19,35 @@
 
 (define part1-lexer
   (lexer [(eof) eof]
-         ["mul" 'mul]
-         ["(" 'left-paren]
-         [")" 'right-paren]
-         ["," 'comma]
-         [(repetition 1 +inf.0 numeric) (string->number lexeme)]
-         ; Skip everything else - any single character that doesn't match above
+         ; Match valid mul(x,y) pattern and extract the numbers
+         [(concatenation "mul("
+                        (repetition 1 3 numeric)
+                        ","
+                        (repetition 1 3 numeric)
+                        ")")
+          (let ([match lexeme])
+            (display lexeme)
+            ; Extract numbers from "mul(x,y)"
+            (let ([nums (regexp-match* #rx"[0-9]+" match)])
+              (map string->number nums)))]
+         ; Skip everything else
          [any-char (part1-lexer input-port)]))
 
 (define input
   (with-input-from-file filename
                         (lambda ()
-                          (sequence->list (in-producer (lambda () (part1-lexer (current-input-port)))
-                                                       eof-object?)))))
+                          (let loop ([result '()])
+                            (let ([token (part1-lexer (current-input-port))])
+                              (cond
+                                [(eof-object? token) (reverse (flatten result))]
+                                [(list? token) (loop (cons token result))]
+                                [else (loop result)]))))))
 
 (define (part1 input)
-  (~> (filter number? input)
+  (~> input
       (in-slice 2 _)
       sequence->list
-      (foldl (λ (pair acc) (displayln pair) (+ acc (apply * pair))) 0 _)
-      )
-  )
+      (foldl (λ (pair acc) (+ acc (apply * pair))) 0 _)))
 
 (define (part2 input)
   "TODO: Implement part 2")
