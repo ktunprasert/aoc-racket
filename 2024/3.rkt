@@ -49,8 +49,19 @@
       (foldl (λ (pair acc) (+ acc (apply * pair))) 0 _)))
 
 (define (part2 input)
-  (~> input (displayln _))
-  "TODO: Implement part 2")
+  (~> (for/fold ([do #t]
+                 [out empty]
+                 #:result out)
+                ([tok input]
+                 #:do [(case tok
+                         ['do (set! do #t)]
+                         ['dont (set! do #f)])])
+        (if (and do (number? tok))
+            (values do (cons tok out))
+            (values do out)))
+      (in-slice 2 _)
+      sequence->list
+      (foldl (λ (pair acc) (+ acc (apply * pair))) 0 _)))
 
 (when (has-flag? "--output")
   (printf "Input: ~a~n" input))
