@@ -29,10 +29,10 @@
         (first non-flags))))
 
 (define input
-  (with-input-from-file filename
-    (lambda ()
-      (for/list ([line (in-lines)])
-        line))))
+  (time (display \"Parsing took: \") (with-input-from-file filename
+      (lambda ()
+        (for/list ([line (in-lines)])
+          line)))) )
 
 (define (part1 input)
   \"TODO: Implement part 1\")
