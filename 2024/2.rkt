@@ -21,15 +21,16 @@
                         (λ ()
                           (for/list ([line (in-lines)])
                             (map string->number (string-split line))))))
+
+(define (safe? lst)
+  (and (andmap (λ (n) (and (<= (abs n) 3) (>= (abs n) 1))) lst)
+       (or (andmap negative-integer? lst) (andmap positive-integer? lst))))
+
+(define (to-diff lst)
+  (foldl (λ (a b l) (cons (- a b) l)) empty (drop lst 1) (drop-right lst 1)))
+
 (define (part1 input)
-  (let ([lsts (map (λ (lst)
-                     (foldl (λ (a b l) (cons (- a b) l)) empty (drop lst 1) (drop-right lst 1)))
-                   input)])
-    (for/sum ([lst lsts])
-             (if (and (andmap (λ (n) (and (<= (abs n) 3) (>= (abs n) 1))) lst)
-                      (or (andmap negative-integer? lst) (andmap positive-integer? lst)))
-                 1
-                 0))))
+  (~> input (map to-diff _) (count safe? _)))
 
 (define (part2 input)
   "TODO: Implement part 2")
