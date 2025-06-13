@@ -29,11 +29,16 @@
 (define (to-diff lst)
   (foldl (λ (a b l) (cons (- a b) l)) empty (drop lst 1) (drop-right lst 1)))
 
-(define (part1 input)
-  (~> input (map to-diff _) (count safe? _)))
+(define part1 (curry count (compose safe? to-diff)))
 
 (define (part2 input)
-  "TODO: Implement part 2")
+  (~> input
+      (count (lambda (lst)
+               (for/or ([l (in-combinations lst (sub1 (length lst)))])
+                 (~> l to-diff safe?)))
+             _)
+      ;
+      ))
 
 (when (has-flag? "--output")
   (printf "Input: ~a~n" input))
