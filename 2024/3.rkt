@@ -5,6 +5,7 @@
          part2)
 
 (require parser-tools/lex)
+
 (require threading)
 
 (define args (vector->list (current-command-line-arguments)))
@@ -19,10 +20,8 @@
 
 (define part1-lexer
   (lexer [(eof) eof]
-         ; Match "mul(" followed by numbers, comma, numbers, ")"
          [(concatenation "mul(" (repetition 1 3 numeric) "," (repetition 1 3 numeric) ")")
-          ; Parse the lexeme manually but cleanly
-          (let* ([content (substring lexeme 4 (- (string-length lexeme) 1))] ; Remove "mul(" and ")"
+          (let* ([content (substring lexeme 4 (- (string-length lexeme) 1))]
                  [parts (string-split content ",")])
             (list (string->number (first parts)) (string->number (second parts))))]
          ; Skip everything else
