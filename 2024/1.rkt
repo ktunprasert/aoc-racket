@@ -1,27 +1,10 @@
 #lang racket
 
-(define _example1 "3   4
-4   3
-2   5
-1   3
-3   9
-3   3
-")
+(define lists
+  (for/lists (a b #:result (list (sort a <) (sort b <))) ([x (in-port)] [y (in-port)]) (values x y)))
 
-;; (define input1 (file->string "1.txt"))
+(displayln lists)
 
-(define (solve1 s)
-  (define parsed (map string->number (string-split s #px"\\s+|\n")))
-  (define l empty)
-  (define r empty)
+(displayln (apply foldl (lambda (a b dist) (+ dist (abs (- a b)))) 0 lists))
 
-  (do ()
-      ((empty? parsed) (set!-values (l r) (values (sort l <) (sort r <))))
-      (match-let ([(list a b) (take parsed 2)])
-        (set! l (cons a l))
-        (set! r (cons b r))
-        (set! parsed (drop parsed 2))))
-
-  (for/sum ([l l] [r r]) (abs (- l r))))
-
-(solve1 _example1)
+(displayln (foldl (λ (x z) (+ (* x (count (curry = x) (second lists))) z)) 0 (first lists)))
