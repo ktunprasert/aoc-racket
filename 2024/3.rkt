@@ -10,10 +10,10 @@
 
 (define args (vector->list (current-command-line-arguments)))
 
-(define has-flag? (lambda (flag) (member flag args)))
+(define has-flag? (λ (flag) (member flag args)))
 
 (define filename
-  (let ([non-flags (filter (lambda (arg) (not (string-prefix? arg "--"))) args)])
+  (let ([non-flags (filter (λ (arg) (not (string-prefix? arg "--"))) args)])
     (if (null? non-flags)
         "2024/3.txt"
         (first non-flags))))
@@ -32,7 +32,7 @@
 (define input
   (time (display "Parsing took: ")
         (with-input-from-file filename
-                              (lambda ()
+                              (λ ()
                                 (let loop ([result '()])
                                   (let ([token (part1-lexer (current-input-port))])
                                     (cond
