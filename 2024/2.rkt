@@ -18,7 +18,7 @@
   (with-input-from-file filename
                         (lambda ()
                           (for/list ([line (in-lines)])
-                            (list line)))))
+                            (map string->number (string-split line))))))
 
 (define (part1 input)
   "TODO: Implement part 1")
