@@ -31,14 +31,11 @@
 
 (define part1 (curry count (compose safe? to-diff)))
 
-(define (part2 input)
-  (~> input
-      (count (lambda (lst)
-               (for/or ([l (in-combinations lst (sub1 (length lst)))])
-                 (~> l to-diff safe?)))
-             _)
-      ;
-      ))
+(define part2
+  (curry count
+         (lambda (lst)
+           (for/or ([l (in-combinations lst (sub1 (length lst)))])
+             (~> l to-diff safe?)))))
 
 (when (has-flag? "--output")
   (printf "Input: ~a~n" input))
