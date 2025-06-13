@@ -29,7 +29,7 @@
 (define (to-diff lst)
   (foldl (λ (a b l) (cons (- a b) l)) empty (drop lst 1) (drop-right lst 1)))
 
-(define part1 (curry count (compose safe? to-diff)))
+(define part1 (curry count (λ~> to-diff safe?)))
 
 (define part2
   (curry count
