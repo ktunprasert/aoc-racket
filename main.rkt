@@ -17,21 +17,11 @@
 
 ; Set up the input file for the day module to use
 (parameterize ([current-command-line-arguments (vector input-file)])
-  ; Load the module and get its provided symbols
-  (define module-path (string->path day-module))
-  (define mod-ns (module->namespace module-path))
-  
-  ; Get all exported symbols from the module
-  (define exported-symbols 
-    (parameterize ([current-namespace mod-ns])
-      (namespace-mapped-symbols)))
-  
-  (printf "Module symbols: ~a~n" exported-symbols)
-  
-  ; Time each exported symbol that's not a utility variable
-  (parameterize ([current-namespace mod-ns])
-    (for ([name exported-symbols])
-      (when (and (not (eq? name 'args))
-                 (not (eq? name 'filename)))
-        (printf "Timing ~a: " name)
-        (time (namespace-variable-value name))))))
+  ; Common symbols to try timing from AOC solutions
+  (define symbols-to-time '(lists part1 part2))
+
+  (for ([sym symbols-to-time])
+    (with-handlers ([exn:fail? (lambda (_e) #f)])
+      (printf "Timing ~a:~n" sym)
+      (time (dynamic-require day-module sym))
+      (newline))))

@@ -1,5 +1,7 @@
 #lang racket
 
+(provide lists part1 part2)
+
 (define args (vector->list (current-command-line-arguments)))
 
 (define filename
