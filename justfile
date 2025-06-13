@@ -2,7 +2,7 @@ default:
     @just --list
 
 run YEAR DAY *FLAGS:
-    racket {{FLAGS}} ./{{YEAR}}/{{DAY}}.rkt
+    racket {{FLAGS}} main.rkt {{YEAR}} {{DAY}}
 
 example YEAR DAY *FLAGS:
-    racket {{FLAGS}} ./{{YEAR}}/{{DAY}}.rkt {{YEAR}}/{{DAY}}e.txt
+    racket {{FLAGS}} main.rkt {{YEAR}} {{DAY}} {{YEAR}}/{{DAY}}e.txt
