@@ -1,8 +1,8 @@
 #lang racket
 
-;; (provide input
-;;          part1
-;;          part2)
+(provide input
+         part1
+         part2)
 
 (require parser-tools/lex)
 (require threading)
@@ -16,11 +16,6 @@
     (if (null? non-flags)
         "2024/3.txt"
         (first non-flags))))
-
-;; (define sample-input "xmul(69,420)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))")
-;; (define (part1-get-tokens a-lexer input-string)
-;;   (define p (open-input-string input-string))
-;;   (sequence->list (in-producer (lambda () (a-lexer p)) eof-object?)))
 
 (define part1-lexer
   (lexer [(eof) eof]
