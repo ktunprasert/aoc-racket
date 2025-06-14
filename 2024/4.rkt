@@ -38,35 +38,29 @@
 ; pos (0 0)
 ; delta (0 0)
 (define (word-search x y dx dy)
-  (displayln (list "word-search at:" x y "dx:" dx "dy:" dy))
+  ;; (displayln (list "word-search at:" x y "dx:" dx "dy:" dy))
   (let* ([x (+ x dx)]
          [y (+ y dy)]
          [seq-x (if (zero? dx)
-                    (in-cycle (in-list (list x))) ; cycle just x
+                    (in-cycle (in-value x)) ; cycle just x
                     (in-range x (+ x (* 3 dx)) dx))] ; proper range
          [seq-y (if (zero? dy)
-                    (in-cycle (in-list (list y))) ; cycle just y
+                    (in-cycle (in-value y)) ; cycle just y
                     (in-range y (+ y (* 3 dy)) dy))]) ; proper range
 
-    (for/or ([should "MAS"]
-              [cx seq-x]
-              [cy seq-y]
-              #:when (andmap in-bound (list cx cy))
-              )
-      #:final (display (char=? (grid-at cx cy) should)) (char=? (grid-at cx cy) should)
-      ;; #:break (not ok?)
-      ;; (displayln (list "coords:" cx cy "expected:" should "ok?" ok?))
-      (displayln (list "coords:" cx cy "expected:" should))
-      ;; (displayln (list "grid-at:" (grid-at cx cy)))
-      (char=? (grid-at cx cy) should))
-    )
-
-  )
+    (let ([val (for/and ([should "MAS"]
+                         [cx seq-x]
+                         [cy seq-y])
+                 (if (andmap in-bound (list cx cy))
+                     (char=? (grid-at cx cy) should)
+                     #f))])
+      ;; (displayln (list "word-search result:" val))
+      val)))
 
 (define (part1 input)
   ;; (displayln input)
   ;; (displayln (grid-at 0 5))
-  (displayln (word-search 0 5 0 1))
+  ;; (displayln (word-search 0 5 0 -1))
 
   ;; (displayln (count (λ (d) (word-search 0 5 (first d) (second d))) deltas))
   ;; for*/fold
@@ -76,14 +70,14 @@
              ([(row x) (in-indexed input)]
               [(c y) (in-indexed row)]
               #:when (char=? #\X c))
-    sum
+    ;; sum
     ;; (displayln (list c x y "count:" (count (λ (d) (word-search x y (first d) (second d))) deltas)))
     ;; (displayln)
-    ;; (+ sum
-    ;;    (count (λ (d)
-    ;;             ;; (displayln d)
-    ;;             (word-search x y (first d) (second d)))
-    ;;           deltas))
+    (+ sum
+       (count (λ (d)
+                ;; (displayln d)
+                (word-search x y (first d) (second d)))
+              deltas))
     ;; (displayln (list c x))
     ;; sum)
     ))
