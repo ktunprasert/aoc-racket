@@ -34,20 +34,20 @@
                                       [#\^ (set! starting-pos (list x y))])))))
         obstacle-map))
 
-(define-values (N E S W) (values '(-1 0) '(0 1) '(1 0) '(0 -1)))
-
 (define (in-bound? pos)
-  (and (positive-integer? (first pos))
-       (positive-integer? (second pos))
+  (and (>= (first pos) 0)
+       (>= (second pos) 0)
        (< (first pos) pos-bound)
        (< (second pos) pos-bound)))
 
+(define-values (N E S W) (values '(-1 0) '(0 1) '(1 0) '(0 -1)))
+
 (define (turn delta)
-  (match delta
-    [N E]
-    [E S]
-    [S W]
-    [W N]))
+  (cond
+    [(eq? delta N) E]
+    [(eq? delta E) S]
+    [(eq? delta S) W]
+    [(eq? delta W) N]))
 
 (define (part1 input)
   (define visited (make-hash))
