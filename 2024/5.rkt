@@ -42,24 +42,44 @@
   (for/hash ([h (first input)])
     (values (reverse h) #t)))
 
+(define (middle lst)
+  (~> (length lst) (quotient _ 2) (drop lst _) first))
+
 (define (part1 input)
   (for/sum ([lst (second input)])
            (if (for/and ([n lst]
                          #:when (> (length (member n lst)) 1))
                  (andmap (λ (r) (not (hash-ref fail-map (list n r) #f))) (rest (member n lst))))
-               (~> (length lst) (quotient _ 2) (drop lst _) first)
+               (middle lst)
                0)))
 
 (define (part2 input)
-  (let ([incorrects (filter (λ (lst)
-                              (not (for/and ([n lst]
-                                             #:when (> (length (member n lst)) 1))
-                                     (andmap (λ (r) (not (hash-ref fail-map (list n r) #f)))
-                                             (rest (member n lst))))))
-                            (second input))])
-    (displayln incorrects))
+  (for/sum ([lst (filter (λ (lst)
+                             (not (for/and ([n lst]
+                                            #:when (> (length (member n lst)) 1))
+                                    (andmap (λ (r) (not (hash-ref fail-map (list n r) #f)))
+                                            (rest (member n lst))))))
+                           (second input))])
+    (let loop ([sub-lst lst]
+               [idx 0])
+      (define target (drop sub-lst idx))
+      (define l (car target))
+      (define rest (cdr target))
+      (define right-idx idx)
+      (define found? #f)
+      (for ([r rest]
+            #:do [(set! right-idx (add1 right-idx))]
+            #:final (hash-ref fail-map (list l r) #f))
+        (when (hash-ref fail-map (list l r) #f)
+          ;; (displayln (format "swapped: ~a" (~> (list-set sub-lst idx r) (list-set _ right-idx l))))
+          (set! found? #t)
+          (set! sub-lst (~> (list-set sub-lst idx r) (list-set _ right-idx l)))))
 
-  "TODO: Implement part 2")
+      (cond
+        [(= idx (- (length sub-lst) 2)) (middle sub-lst)]
+        [found? (loop sub-lst idx)]
+        [else (loop sub-lst (add1 idx))])))
+  )
 
 (when (has-flag? "--output")
   (printf "Input: ~a~n" input))
