@@ -51,6 +51,14 @@
                0)))
 
 (define (part2 input)
+  (let ([incorrects (filter (λ (lst)
+                              (not (for/and ([n lst]
+                                             #:when (> (length (member n lst)) 1))
+                                     (andmap (λ (r) (not (hash-ref fail-map (list n r) #f)))
+                                             (rest (member n lst))))))
+                            (second input))])
+    (displayln incorrects))
+
   "TODO: Implement part 2")
 
 (when (has-flag? "--output")
