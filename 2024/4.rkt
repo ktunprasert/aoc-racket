@@ -26,10 +26,13 @@
 (define (in-bound v)
   (not (or (negative-integer? v) (>= v (vector-length :input)))))
 
+(define-values (NW N NE W E SE S SW)
+  (values '(-1 -1) '(-1 0) '(-1 1) '(0 -1) '(0 1) '(1 -1) '(1 0) '(1 1)))
+
 ;NW N NE
 ;W _ E
 ;SE S SW
-(define deltas '((-1 -1) (-1 0) (-1 1) (0 -1) (0 1) (1 -1) (1 0) (1 1)))
+(define deltas (list NW N NE E SE S W SW))
 ;; (define token (string->list "XMAS"))
 
 (define (grid-at x y)
