@@ -59,8 +59,25 @@
   (for*/sum ([(row x) (in-indexed input)] [(c y) (in-indexed row)] #:when (char=? #\X c))
             (count (λ (d) (word-search x y (first d) (second d))) deltas)))
 
+(define (diag-search x y)
+  (if (and (in-bound x) (in-bound y))
+      (let* ([top-left (grid-at (- x 1) (- y 1))]
+             [top-right (grid-at (- x 1) (+ y 1))]
+             [bottom-left (grid-at (+ x 1) (- y 1))]
+             [bottom-right (grid-at (+ x 1) (+ y 1))]
+             [diag1 (list top-left bottom-right)]
+             [diag2 (list top-right bottom-left)])
+        ;; Check if both diagonals form "MAS" or "SAM"
+        (and (or (equal? diag1 '(#\M #\S)) (equal? diag1 '(#\S #\M)))
+             (or (equal? diag2 '(#\M #\S)) (equal? diag2 '(#\S #\M)))))
+      #f))
+
 (define (part2 input)
-  "TODO: Implement part 2")
+  ;; lets just grid scan 3x3 everywhere fuck it im lazy
+  (define len (vector-length input))
+  (for*/sum ([x (in-range 1 (sub1 len))] [y (in-range 1 (sub1 len))]
+                                         #:when (char=? #\A (grid-at x y)))
+            (if (diag-search x y) 1 0)))
 
 (when (has-flag? "--output")
   (printf "Input: ~a~n" :input))
