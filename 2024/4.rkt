@@ -23,6 +23,9 @@
                                 (for/vector ([line (in-lines)])
                                   (~> line string->list list->vector))))))
 
+(define (in-bound v)
+  (not (or (negative-integer? v) (>= v (vector-length :input)))))
+
 ;NW N NE
 ;W _ E
 ;SE S SW
@@ -47,18 +50,43 @@
     (for/fold ([ok? #t])
               ([should "MAS"]
                [cx seq-x]
-               [cy seq-y])
+               [cy seq-y]
+               ;; #:when (and (not (negative)))
+               ;; #:when (~> (values (negative-integer? cx) (negative-integer? cy)) or not))
+               ;; #:when (~> (or (negative-integer? cx) (negative-integer? cy) (<)) not))
+               ;; #:when (~> (list cx cy) (apply in-bound _)))
+               #:when (~> (list cx cy) (andmap in-bound _)))
       ;; #:final (not ok?)
       #:break (not ok?)
-      (displayln (list "coords:" cx cy "expected:" should "ok?" ok?))
-      (displayln (list "grid-at:" (grid-at cx cy)))
+      ;; (displayln (list "coords:" cx cy "expected:" should "ok?" ok?))
+      ;; (displayln (list "grid-at:" (grid-at cx cy)))
       (char=? (grid-at cx cy) should))))
 
 (define (part1 input)
+  ;; (displayln input)
   ;; (displayln (grid-at 0 5))
-  (displayln (word-search 0 5 0 -1))
+  ;; (displayln (word-search 0 5 0 -1))
+  ;; for*/fold
+  ;; match-for
+  (for*/fold ([sum 0])
+             ([(row x) (in-indexed input)]
+              [(c y) (in-indexed row)]
+              #:when (char=? #\X c))
+    ;; (displayln (list c x y))
+    ;; (displayln deltas)
+    (displayln (count (λ (d)
+                        ;; (displayln d)
+                        (word-search x y (first d) (second d)))
+                      deltas))
+    (+ sum
+       (count (λ (d)
+                ;; (displayln d)
+                (word-search x y (first d) (second d)))
+              deltas))
+    ;; (displayln (list c x))
+    ;; sum)
+    )
 
-  "TODO: Implement part 1"
   )
 
 (define (part2 input)
