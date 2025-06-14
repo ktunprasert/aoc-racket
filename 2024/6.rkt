@@ -14,13 +14,27 @@
         "2024/6.txt"
         (first non-flags))))
 
+(define obstacle-map (make-hash))
+(define starting-pos empty)
+
 (define input
-  (time (display "Parsing took: ") (with-input-from-file filename
-      (lambda ()
-        (for/list ([line (in-lines)])
-          line)))) )
+  (time (display "Parsing took: ")
+        (with-input-from-file filename
+                              (lambda ()
+                                (define x -1)
+                                (for ([line (in-lines)]
+                                            #:do [(set! x (add1 x))])
+                                  (define y -1)
+                                  (for ([c line]
+                                        #:do [(set! y (add1 y))]
+                                        #:when (or (char=? #\^ c) (char=? #\# c)))
+                                    (match c
+                                      [#\# (hash-set! obstacle-map (list x y) 'wall)]
+                                      [#\^ (set! starting-pos (list x y))])))))))
 
 (define (part1 input)
+  (printf "\nobs ~a starting ~a\n" obstacle-map starting-pos)
+
   "TODO: Implement part 1")
 
 (define (part2 input)
