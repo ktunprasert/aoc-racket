@@ -35,10 +35,7 @@
 (define (grid-at x y)
   (~> :input (vector-ref _ x) (vector-ref _ y)))
 
-; pos (0 0)
-; delta (0 0)
 (define (word-search x y dx dy)
-  ;; (displayln (list "word-search at:" x y "dx:" dx "dy:" dy))
   (let* ([x (+ x dx)]
          [y (+ y dy)]
          [seq-x (if (zero? dx)
@@ -48,38 +45,22 @@
                     (in-cycle (in-value y)) ; cycle just y
                     (in-range y (+ y (* 3 dy)) dy))]) ; proper range
 
-    (let ([val (for/and ([should "MAS"]
-                         [cx seq-x]
-                         [cy seq-y])
-                 (if (andmap in-bound (list cx cy))
-                     (char=? (grid-at cx cy) should)
-                     #f))])
-      ;; (displayln (list "word-search result:" val))
-      val)))
+    (for/and ([should "MAS"]
+              [cx seq-x]
+              [cy seq-y])
+      (if (andmap in-bound (list cx cy))
+          (char=? (grid-at cx cy) should)
+          #f))))
 
 (define (part1 input)
-  ;; (displayln input)
-  ;; (displayln (grid-at 0 5))
-  ;; (displayln (word-search 0 5 0 -1))
-
-  ;; (displayln (count (λ (d) (word-search 0 5 (first d) (second d))) deltas))
-  ;; for*/fold
-  ;; match-for
-
   (for*/fold ([sum 0])
              ([(row x) (in-indexed input)]
               [(c y) (in-indexed row)]
               #:when (char=? #\X c))
-    ;; sum
-    ;; (displayln (list c x y "count:" (count (λ (d) (word-search x y (first d) (second d))) deltas)))
-    ;; (displayln)
     (+ sum
        (count (λ (d)
-                ;; (displayln d)
                 (word-search x y (first d) (second d)))
               deltas))
-    ;; (displayln (list c x))
-    ;; sum)
     ))
 
 (define (part2 input)
