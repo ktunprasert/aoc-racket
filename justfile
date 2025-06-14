@@ -14,3 +14,4 @@ example YEAR DAY *FLAGS:
 
 generate YEAR DAY *FLAGS:
     racket {{FLAGS}} gen.rkt {{YEAR}} {{DAY}}
+    racket {{FLAGS}} dl.rkt {{YEAR}} {{DAY}}
