@@ -16,6 +16,7 @@
 
 (define obstacle-map (make-hash))
 (define starting-pos empty)
+(define pos-bound 0)
 
 (define input
   (time (display "Parsing took: ")
@@ -23,17 +24,37 @@
                               (lambda ()
                                 (define x -1)
                                 (for ([line (in-lines)]
-                                            #:do [(set! x (add1 x))])
+                                      #:do [(set! x (add1 x)) (set! pos-bound (add1 pos-bound))])
                                   (define y -1)
                                   (for ([c line]
                                         #:do [(set! y (add1 y))]
                                         #:when (or (char=? #\^ c) (char=? #\# c)))
                                     (match c
                                       [#\# (hash-set! obstacle-map (list x y) 'wall)]
-                                      [#\^ (set! starting-pos (list x y))])))))))
+                                      [#\^ (set! starting-pos (list x y))])))))
+        obstacle-map))
+
+(define-values (N E S W) (values '(-1 0) '(0 1) '(1 0) '(0 -1)))
+
+(define (in-bound? pos)
+  (and (positive-integer? (first pos))
+       (positive-integer? (second pos))
+       (< (first pos) pos-bound)
+       (< (second pos) pos-bound)))
 
 (define (part1 input)
-  (printf "\nobs ~a starting ~a\n" obstacle-map starting-pos)
+  (define visited (make-hash))
+
+  ;; (printf "\nobs ~a starting ~a\n" obstacle-map starting-pos)
+  ;; (define facing N)
+  ;; (define starting starting-pos)
+  (displayln pos-bound)
+  (let loop ([current starting-pos]
+             [delta N])
+    ;; (cond
+    ;;   [(hash-ref  )]
+    ;;   )
+    1)
 
   "TODO: Implement part 1")
 
