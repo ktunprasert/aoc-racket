@@ -57,27 +57,23 @@
                0)))
 
 (define (part2 input)
-  (for/sum
-   ([lst (filter (λ (lst) (not (is-ordered? lst))) (second input))])
-   (let loop ([sub-lst lst]
-              [idx 0])
-     (define target (drop sub-lst idx))
-     (define l (car target))
-     (define rest (cdr target))
-     (define right-idx idx)
-     (define found? #f)
-     (for ([r rest]
-           #:do [(set! right-idx (add1 right-idx))]
-           #:final (hash-ref fail-map (list l r) #f))
-       (when (hash-ref fail-map (list l r) #f)
-         ;; (displayln (format "swapped: ~a" (~> (list-set sub-lst idx r) (list-set _ right-idx l))))
-         (set! found? #t)
-         (set! sub-lst (~> (list-set sub-lst idx r) (list-set _ right-idx l)))))
+  (for/sum ([lst (filter (λ (lst) (not (is-ordered? lst))) (second input))])
+           (let loop ([sub-lst lst]
+                      [idx 0])
+             (define target (drop sub-lst idx))
+             (define-values (l rest) (values (car target) (cdr target)))
+             (define-values (right-idx found?) (values idx #f))
+             (for ([r rest]
+                   #:do [(set! right-idx (add1 right-idx))]
+                   #:final (hash-ref fail-map (list l r) #f)
+                   #:when (hash-ref fail-map (list l r) #f))
+               (set! found? #t)
+               (set! sub-lst (~> (list-set sub-lst idx r) (list-set _ right-idx l))))
 
-     (cond
-       [(= idx (- (length sub-lst) 2)) (middle sub-lst)]
-       [found? (loop sub-lst idx)]
-       [else (loop sub-lst (add1 idx))]))))
+             (cond
+               [(= idx (- (length sub-lst) 2)) (middle sub-lst)]
+               [found? (loop sub-lst idx)]
+               [else (loop sub-lst (add1 idx))]))))
 
 (when (has-flag? "--output")
   (printf "Input: ~a~n" input))
