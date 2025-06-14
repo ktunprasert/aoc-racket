@@ -30,7 +30,7 @@
 ;W _ E
 ;SE S SW
 (define deltas '((-1 -1) (-1 0) (-1 1) (0 -1) (0 1) (1 -1) (1 0) (1 1)))
-(define token (string->list "XMAS"))
+;; (define token (string->list "XMAS"))
 
 (define (grid-at x y)
   (~> :input (vector-ref _ x) (vector-ref _ y)))
@@ -53,15 +53,8 @@
           #f))))
 
 (define (part1 input)
-  (for*/fold ([sum 0])
-             ([(row x) (in-indexed input)]
-              [(c y) (in-indexed row)]
-              #:when (char=? #\X c))
-    (+ sum
-       (count (λ (d)
-                (word-search x y (first d) (second d)))
-              deltas))
-    ))
+  (for*/sum ([(row x) (in-indexed input)] [(c y) (in-indexed row)] #:when (char=? #\X c))
+            (count (λ (d) (word-search x y (first d) (second d))) deltas)))
 
 (define (part2 input)
   "TODO: Implement part 2")
