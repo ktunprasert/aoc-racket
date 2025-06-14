@@ -28,14 +28,15 @@
 
 (define input
   (time (display "Parsing took: ")
-        (with-input-from-file filename
-                              (λ ()
-                                (let loop ([result '()])
-                                  (let ([token (the-lexer (current-input-port))])
-                                    (cond
-                                      [(eof-object? token) (reverse (group-by length result))]
-                                      [(list? token) (loop (cons token result))]
-                                      [else (loop result)])))))))
+        (with-input-from-file
+         filename
+         (λ ()
+           (let loop ([result '()])
+             (let ([token (the-lexer (current-input-port))])
+               (cond
+                 [(eof-object? token) (reverse (group-by (λ~> length (<= 2)) result))]
+                 [(list? token) (loop (cons token result))]
+                 [else (loop result)])))))))
 
 (define (part1 input)
   "TODO: Implement part 1")
