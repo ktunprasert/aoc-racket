@@ -38,8 +38,17 @@
                  [(list? token) (loop (cons token result))]
                  [else (loop result)])))))))
 
+(define fail-map
+  (for/hash ([h (first input)])
+    (values (reverse h) #t)))
+
 (define (part1 input)
-  "TODO: Implement part 1")
+  (for/sum ([lst (second input)])
+           (if (for/and ([n lst]
+                         #:when (> (length (member n lst)) 1))
+                 (andmap (λ (r) (not (hash-ref fail-map (list n r) #f))) (rest (member n lst))))
+               (~> (length lst) (quotient _ 2) (drop lst _) first)
+               0)))
 
 (define (part2 input)
   "TODO: Implement part 2")
