@@ -42,6 +42,13 @@
        (< (first pos) pos-bound)
        (< (second pos) pos-bound)))
 
+(define (turn delta)
+  (match delta
+    [N E]
+    [E S]
+    [S W]
+    [W N]))
+
 (define (part1 input)
   (define visited (make-hash))
 
