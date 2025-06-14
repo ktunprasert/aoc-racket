@@ -4,6 +4,8 @@
          part1
          part2)
 
+(require threading)
+
 (define args (vector->list (current-command-line-arguments)))
 
 (define has-flag? (lambda (flag) (member flag args)))
@@ -35,10 +37,7 @@
         obstacle-map))
 
 (define (in-bound? pos)
-  (and (>= (first pos) 0)
-       (>= (second pos) 0)
-       (< (first pos) pos-bound)
-       (< (second pos) pos-bound)))
+  (and (>= (first pos) 0) (>= (second pos) 0) (< (first pos) pos-bound) (< (second pos) pos-bound)))
 
 (define-values (N E S W) (values '(-1 0) '(0 1) '(1 0) '(0 -1)))
 
@@ -49,21 +48,17 @@
     [(eq? delta S) W]
     [(eq? delta W) N]))
 
-(define (part1 input)
+(define (part1 _)
   (define visited (make-hash))
-
-  ;; (printf "\nobs ~a starting ~a\n" obstacle-map starting-pos)
-  ;; (define facing N)
-  ;; (define starting starting-pos)
-  (displayln pos-bound)
   (let loop ([current starting-pos]
              [delta N])
-    ;; (cond
-    ;;   [(hash-ref  )]
-    ;;   )
-    1)
-
-  "TODO: Implement part 1")
+    (when (and (not (hash-has-key? obstacle-map current)) (in-bound? current))
+      (hash-set! visited current #t))
+    (cond
+      [(not (in-bound? current)) 'exited]
+      [(hash-has-key? obstacle-map current) (loop (map - current delta) (turn delta))]
+      [else (loop (map + current delta) delta)]))
+  (hash-count visited))
 
 (define (part2 input)
   "TODO: Implement part 2")
