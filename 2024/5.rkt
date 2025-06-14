@@ -45,23 +45,20 @@
 (define (middle lst)
   (~> (length lst) (quotient _ 2) (drop lst _) first))
 
+(define (is-ordered? lst)
+  (for/and ([n lst]
+            #:when (> (length (member n lst)) 1))
+    (andmap (λ (r) (not (hash-ref fail-map (list n r) #f))) (rest (member n lst)))))
+
 (define (part1 input)
   (for/sum ([lst (second input)])
-           (if (for/and ([n lst]
-                         #:when (> (length (member n lst)) 1))
-                 (andmap (λ (r) (not (hash-ref fail-map (list n r) #f))) (rest (member n lst))))
+           (if (is-ordered? lst)
                (middle lst)
                0)))
 
 (define (part2 input)
   (for/sum
-   ([lst
-     (filter (λ (lst)
-               (not (for/and ([n lst]
-                              #:when (> (length (member n lst)) 1))
-                      (andmap (λ (r) (not (hash-ref fail-map (list n r) #f)))
-                              (rest (member n lst))))))
-             (second input))])
+   ([lst (filter (λ (lst) (not (is-ordered? lst))) (second input))])
    (let loop ([sub-lst lst]
               [idx 0])
      (define target (drop sub-lst idx))
