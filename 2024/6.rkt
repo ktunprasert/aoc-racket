@@ -60,8 +60,49 @@
       [else (loop (map + current delta) delta)]))
   (hash-count visited))
 
-(define (part2 input)
-  "TODO: Implement part 2")
+(define (part2 _)
+  (define original-visited (make-hash))
+
+  ; First, get all positions visited in original path
+  (let loop ([current starting-pos]
+             [delta N])
+    (when (and (not (hash-has-key? obstacle-map current)) (in-bound? current))
+      (hash-set! original-visited current #t))
+    (cond
+      [(not (in-bound? current)) 'done]
+      [(hash-has-key? obstacle-map current) (loop (map - current delta) (turn delta))]
+      [else (loop (map + current delta) delta)]))
+
+  ; Function to check if adding obstacle at pos creates a loop
+  (define (creates-loop? obstacle-pos)
+    (define state-visited (make-hash))
+    (hash-set! obstacle-map obstacle-pos 'wall)
+
+    (define result
+      (let loop ([current starting-pos]
+                 [delta N])
+        (define state (list current delta))
+        (cond
+          [(hash-has-key? state-visited state) 'loop]
+          [(not (in-bound? current)) 'exited]
+          [else
+           (when (and (not (hash-has-key? obstacle-map current)) (in-bound? current))
+             (hash-set! state-visited state #t))
+           (if (hash-has-key? obstacle-map current)
+               (loop (map - current delta) (turn delta))
+               (loop (map + current delta) delta))])))
+
+    (hash-remove! obstacle-map obstacle-pos)
+    (eq? result 'loop))
+
+  ; Count positions that create loops
+  (define loop-count 0)
+  (for ([pos (hash-keys original-visited)])
+    (when (and (not (equal? pos starting-pos))
+               (creates-loop? pos))
+      (set! loop-count (add1 loop-count))))
+
+  loop-count)
 
 (when (has-flag? "--output")
   (printf "Input: ~a~n" input))
