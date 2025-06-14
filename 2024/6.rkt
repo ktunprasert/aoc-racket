@@ -61,17 +61,18 @@
   (hash-count visited))
 
 (define (part2 _)
-  (define original-visited (make-hash))
-
-  ; First, get all positions visited in original path
+  (define original-path '())
+  
+  ; Get the actual path taken (in order)
   (let loop ([current starting-pos]
-             [delta N])
-    (when (and (not (hash-has-key? obstacle-map current)) (in-bound? current))
-      (hash-set! original-visited current #t))
+             [delta N]
+             [path '()])
     (cond
-      [(not (in-bound? current)) 'done]
-      [(hash-has-key? obstacle-map current) (loop (map - current delta) (turn delta))]
-      [else (loop (map + current delta) delta)]))
+      [(not (in-bound? current)) (set! original-path (reverse path))]
+      [(hash-has-key? obstacle-map current) 
+       (loop (map - current delta) (turn delta) path)]
+      [else 
+       (loop (map + current delta) delta (cons current path))]))
 
   ; Function to check if adding obstacle at pos creates a loop
   (define (creates-loop? obstacle-pos)
@@ -80,29 +81,26 @@
 
     (define result
       (let loop ([current starting-pos]
-                 [delta N])
+                 [delta N]
+                 [steps 0])
         (define state (list current delta))
         (cond
+          [(> steps (* pos-bound pos-bound 4)) 'loop] ; Simple cycle detection
           [(hash-has-key? state-visited state) 'loop]
           [(not (in-bound? current)) 'exited]
           [else
-           (when (and (not (hash-has-key? obstacle-map current)) (in-bound? current))
-             (hash-set! state-visited state #t))
+           (hash-set! state-visited state #t)
            (if (hash-has-key? obstacle-map current)
-               (loop (map - current delta) (turn delta))
-               (loop (map + current delta) delta))])))
+               (loop (map - current delta) (turn delta) (add1 steps))
+               (loop (map + current delta) delta (add1 steps)))])))
 
     (hash-remove! obstacle-map obstacle-pos)
     (eq? result 'loop))
 
-  ; Count positions that create loops
-  (define loop-count 0)
-  (for ([pos (hash-keys original-visited)])
-    (when (and (not (equal? pos starting-pos))
-               (creates-loop? pos))
-      (set! loop-count (add1 loop-count))))
-
-  loop-count)
+  ; Only check positions that are on the original path (excluding start)
+  (define candidates (remove-duplicates (filter (lambda (pos) (not (equal? pos starting-pos))) original-path)))
+  
+  (length (filter creates-loop? candidates)))
 
 (when (has-flag? "--output")
   (printf "Input: ~a~n" input))
