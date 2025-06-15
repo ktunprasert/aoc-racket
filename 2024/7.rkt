@@ -55,7 +55,7 @@
          operator-combinations)))
 
 (define (equation-possible? target nums)
-  (and (>= (apply * nums) target) (ormap (curry = target) (generate-combinations nums))))
+  (ormap (curry = target) (generate-combinations nums)))
 
 (define (part1 input)
   (for/sum ([lst input] #:when (equation-possible? (first lst) (rest lst))) (car lst)))
