@@ -58,14 +58,7 @@
   (and (>= (apply * nums) target) (ormap (curry = target) (generate-combinations nums))))
 
 (define (part1 input)
-  (~> (for/sum ([lst input] #:when (equation-possible? (first lst) (rest lst)))
-               ;; filter sublist eq target
-               (car lst))
-      )
-  ;; displayln)
-
-  ;; "TODO: Implement part 1"
-  )
+  (for/sum ([lst input] #:when (equation-possible? (first lst) (rest lst))) (car lst)))
 
 (define (part2 input)
   "TODO: Implement part 2")
