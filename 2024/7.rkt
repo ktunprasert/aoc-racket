@@ -5,6 +5,7 @@
          part2)
 
 (require parser-tools/lex)
+(require threading)
 
 (define args (vector->list (current-command-line-arguments)))
 
@@ -36,7 +37,15 @@
                                       [(list? token) (loop (cons token result))]
                                       [else (loop result)])))))))
 
+(define (equation-possible? target nums)
+  (>= (apply * nums) target))
+
 (define (part1 input)
+  (~> (for/sum ([lst input] #:when (equation-possible? (first lst) (rest lst)))
+               ;; filter sublist eq target
+               (car lst))
+      displayln)
+
   "TODO: Implement part 1")
 
 (define (part2 input)
