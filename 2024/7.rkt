@@ -37,16 +37,35 @@
                                       [(list? token) (loop (cons token result))]
                                       [else (loop result)])))))))
 
+(define (generate-op-combinations n)
+  (apply cartesian-product (make-list n (list + *))))
+
+(define (evaluate-left-to-right numbers operators)
+  (foldl (lambda (num op acc) (op acc num)) (car numbers) (cdr numbers) operators))
+
+; Generate all operator combinations with results
+(define (generate-combinations numbers)
+  (let* ([n (length numbers)]
+         [num-operators (- n 1)]
+         [operator-combinations (generate-op-combinations num-operators)])
+    (map (lambda (operators)
+           (let ([result (evaluate-left-to-right numbers operators)])
+             ;; (list numbers operators result)))
+             result))
+         operator-combinations)))
+
 (define (equation-possible? target nums)
-  (>= (apply * nums) target))
+  (and (>= (apply * nums) target) (ormap (curry = target) (generate-combinations nums))))
 
 (define (part1 input)
   (~> (for/sum ([lst input] #:when (equation-possible? (first lst) (rest lst)))
                ;; filter sublist eq target
                (car lst))
-      displayln)
+      )
+  ;; displayln)
 
-  "TODO: Implement part 1")
+  ;; "TODO: Implement part 1"
+  )
 
 (define (part2 input)
   "TODO: Implement part 2")
