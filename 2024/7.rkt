@@ -51,11 +51,8 @@
   (define (try-operators current remaining)
     (cond
       [(null? remaining) (= current target)]
-      [(> current target) #f]  ; Early termination for addition/multiplication
-      [else
-       (ormap (lambda (op)
-                (try-operators (op current (car remaining)) (cdr remaining)))
-              ops)]))
+      [(> current target) #f] ; Early termination for addition/multiplication
+      [else (ormap (lambda (op) (try-operators (op current (car remaining)) (cdr remaining))) ops)]))
 
   (if (null? nums)
       #f
