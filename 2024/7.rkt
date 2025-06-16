@@ -47,25 +47,19 @@
       (* a)
       (+ b)))
 
-(define (generate-op-combinations n [ops (list + *)])
-  (apply cartesian-product (make-list n ops)))
-
-(define (evaluate-left-to-right numbers operators)
-  (foldl (lambda (num op acc) (op acc num)) (car numbers) (cdr numbers) operators))
-
-; Generate all operator combinations with results
-(define (generate-combinations numbers [ops (list + *)])
-  (let* ([n (length numbers)]
-         [num-operators (- n 1)]
-         [operator-combinations (generate-op-combinations num-operators ops)])
-    (map (lambda (operators)
-           (let ([result (evaluate-left-to-right numbers operators)])
-             ;; (list numbers operators result)))
-             result))
-         operator-combinations)))
-
 (define (equation-possible? target nums [ops (list + *)])
-  (ormap (curry = target) (generate-combinations nums ops)))
+  (define (try-operators current remaining)
+    (cond
+      [(null? remaining) (= current target)]
+      [(> current target) #f]  ; Early termination for addition/multiplication
+      [else
+       (ormap (lambda (op)
+                (try-operators (op current (car remaining)) (cdr remaining)))
+              ops)]))
+
+  (if (null? nums)
+      #f
+      (try-operators (car nums) (cdr nums))))
 
 (define (part1 input)
   (for/sum ([lst input] #:when (equation-possible? (first lst) (rest lst))) (car lst)))
