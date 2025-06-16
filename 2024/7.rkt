@@ -37,6 +37,16 @@
                                       [(list? token) (loop (cons token result))]
                                       [else (loop result)])))))))
 
+(define (|| a b)
+  (~> (let loop ([n b]
+                 [count 0])
+        (cond
+          [(<= n 0) count]
+          [else (loop (quotient n 10) (add1 count))]))
+      (expt 10 _)
+      (* a)
+      (+ b)))
+
 (define (generate-op-combinations n)
   (apply cartesian-product (make-list n (list + *))))
 
